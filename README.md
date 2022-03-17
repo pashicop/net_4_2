@@ -114,12 +114,62 @@ vagrant@vagrant:~$ ./script 4
 
 ### Ваш скрипт:
 ```python
-???
+import socket
+import time
+
+def get_one_ip():
+    serv_ip = {}
+    for service in services:
+        serv_ip[service] = socket.gethostbyname(service)
+    return serv_ip
+
+def get_all_ip():
+    serv_ip = {}
+    for service in services:
+        serv_ip[service] = socket.gethostbyname_ex(service)[2]
+    return serv_ip
+
+# def get_new_ip(service):
+#     ip = socket.gethostbyname(service)
+#     return ip
+
+def print_log(list_ip):
+    for service, ip in list_ip.items():
+        ip_new = socket.gethostbyname(service)
+        if ip != ip_new:
+            print(f'[ERROR] {service} IP mismatch: {ip} {ip_new}')
+            list_ip[service] = ip_new
+            # print(list_ip)
+        print(f'{service} - {ip_new}')
+    time.sleep(1)
+
+if __name__ == '__main__':
+    services = ['drive.google.com', 'mail.google.com', 'google.com']
+    # list_ips = get_all_ip()
+    # print(list_ips)
+    list_ip = get_one_ip()
+    while True:
+        print_log(list_ip)
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+drive.google.com - 64.233.162.194
+[ERROR] mail.google.com IP mismatch: 74.125.131.18 74.125.131.83
+mail.google.com - 74.125.131.83
+google.com - 64.233.165.138
+drive.google.com - 64.233.162.194
+[ERROR] mail.google.com IP mismatch: 74.125.131.83 74.125.131.19
+mail.google.com - 74.125.131.19
+google.com - 64.233.165.138
+drive.google.com - 64.233.162.194
+[ERROR] mail.google.com IP mismatch: 74.125.131.19 74.125.131.17
+mail.google.com - 74.125.131.17
+google.com - 64.233.165.138
+drive.google.com - 64.233.162.194
+[ERROR] mail.google.com IP mismatch: 74.125.131.17 74.125.131.18
+mail.google.com - 74.125.131.18
+google.com - 64.233.165.138
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
